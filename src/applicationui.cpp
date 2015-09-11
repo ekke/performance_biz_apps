@@ -50,6 +50,9 @@ ApplicationUI::ApplicationUI() :
     // compiler warning
     Q_UNUSED(res);
 
+    // QTimer
+    qmlRegisterType<QTimer>("org.ekkescorner.common", 1, 0, "QTimer");
+
     // initial load
     onSystemLanguageChanged();
 
@@ -57,10 +60,10 @@ ApplicationUI::ApplicationUI() :
     // to ensure the document gets destroyed properly at shut down.
     QmlDocument *qml = QmlDocument::create("asset:///main.qml").parent(this);
 
+    qml->setContextProperty("app", this);
+
     // Create root object for the UI
     AbstractPane *root = qml->createRootObject<AbstractPane>();
-
-    qml->setContextProperty("app", this);
 
     // Set created root object as the application scene
     Application::instance()->setScene(root);
@@ -83,34 +86,54 @@ void ApplicationUI::checkIndexQStringList()
     JsonDataAccess jda;
     QVariantList cacheList;
     QStringList myIndexes;
+    int duplicates;
     cacheList = jda.load(dataAssetsPath("fakeName.json")).toList();
+    duplicates = 0;
+    QTime time;
+    time.start();
     for (int i = 0; i < cacheList.size(); ++i) {
         QVariantMap fakeMap = cacheList.at(i).toMap();
         QString myIndex = fakeMap.value("Username").toString();
-        if(myIndexes.contains(myIndex)) {
+        if (myIndexes.contains(myIndex)) {
+            duplicates++;
             qDebug() << "DUPLICATE: " << myIndex;
         } else {
             myIndexes << myIndex;
         }
     }
+    QString result;
+    result = "via QStringList\nduplicates: ";
+    result.append(QString::number(duplicates)).append("\nTimer: ").append(
+            QString::number(time.elapsed())).append(" mSeconds");
     qDebug() << "finish checkIndexQStringList";
+    emit doneStringList(result);
 }
 
 void ApplicationUI::checkIndexQVariantMap()
 {
     qDebug() << "Start checkIndexQVariantMap";
-        JsonDataAccess jda;
-        QVariantList cacheList;
-        QVariantMap myIndexes;
-        cacheList = jda.load(dataAssetsPath("fakeName.json")).toList();
-        for (int i = 0; i < cacheList.size(); ++i) {
-            QVariantMap fakeMap = cacheList.at(i).toMap();
-            QString myIndex = fakeMap.value("Username").toString();
-            if(myIndexes.contains(myIndex)) {
-                qDebug() << "DUPLICATE: " << myIndex;
-            } else {
-                myIndexes.insert(myIndex, "");
-            }
+    JsonDataAccess jda;
+    QVariantList cacheList;
+    QVariantMap myIndexes;
+    int duplicates;
+    cacheList = jda.load(dataAssetsPath("fakeName.json")).toList();
+    duplicates = 0;
+    QTime time;
+    time.start();
+    for (int i = 0; i < cacheList.size(); ++i) {
+        QVariantMap fakeMap = cacheList.at(i).toMap();
+        QString myIndex = fakeMap.value("Username").toString();
+        if (myIndexes.contains(myIndex)) {
+            duplicates++;
+            qDebug() << "DUPLICATE: " << myIndex;
+        } else {
+            myIndexes.insert(myIndex, "");
         }
-        qDebug() << "finish checkIndexQVariantMap";
+    }
+    QString result;
+    result = "via QVariantMap\nduplicates: ";
+    result.append(QString::number(duplicates)).append("\nTimer: ").append(
+            QString::number(time.elapsed())).append(" mSeconds");
+    qDebug() << "finish checkIndexQVariantMap";
+    emit doneMap(result);
 }

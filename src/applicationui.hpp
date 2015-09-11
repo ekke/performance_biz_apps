@@ -48,6 +48,11 @@ public:
 
 
     virtual ~ApplicationUI() {}
+
+    Q_SIGNALS:
+    void doneStringList(const QString& info);
+    void doneMap(const QString& info);
+
 private slots:
     void onSystemLanguageChanged();
 private:
