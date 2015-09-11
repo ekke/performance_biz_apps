@@ -21,7 +21,19 @@
 #include <bb/cascades/AbstractPane>
 #include <bb/cascades/LocaleHandler>
 
+#include <bb/data/JsonDataAccess>
+
+static QString dataAssetsPath(const QString& fileName)
+{
+    return QDir::currentPath() + "/app/native/assets/data/" + fileName;
+}
+static QString dataPath(const QString& fileName)
+{
+    return QDir::currentPath() + "/data/" + fileName;
+}
+
 using namespace bb::cascades;
+using namespace bb::data;
 
 ApplicationUI::ApplicationUI() :
         QObject()
@@ -30,7 +42,8 @@ ApplicationUI::ApplicationUI() :
     m_pTranslator = new QTranslator(this);
     m_pLocaleHandler = new LocaleHandler(this);
 
-    bool res = QObject::connect(m_pLocaleHandler, SIGNAL(systemLanguageChanged()), this, SLOT(onSystemLanguageChanged()));
+    bool res = QObject::connect(m_pLocaleHandler, SIGNAL(systemLanguageChanged()), this,
+            SLOT(onSystemLanguageChanged()));
     // This is only available in Debug builds
     Q_ASSERT(res);
     // Since the variable is not used in the app, this is added to avoid a
@@ -47,6 +60,8 @@ ApplicationUI::ApplicationUI() :
     // Create root object for the UI
     AbstractPane *root = qml->createRootObject<AbstractPane>();
 
+    qml->setContextProperty("app", this);
+
     // Set created root object as the application scene
     Application::instance()->setScene(root);
 }
@@ -60,4 +75,42 @@ void ApplicationUI::onSystemLanguageChanged()
     if (m_pTranslator->load(file_name, "app/native/qm")) {
         QCoreApplication::instance()->installTranslator(m_pTranslator);
     }
+}
+
+void ApplicationUI::checkIndexQStringList()
+{
+    qDebug() << "Start checkIndexQStringList";
+    JsonDataAccess jda;
+    QVariantList cacheList;
+    QStringList myIndexes;
+    cacheList = jda.load(dataAssetsPath("fakeName.json")).toList();
+    for (int i = 0; i < cacheList.size(); ++i) {
+        QVariantMap fakeMap = cacheList.at(i).toMap();
+        QString myIndex = fakeMap.value("Username").toString();
+        if(myIndexes.contains(myIndex)) {
+            qDebug() << "DUPLICATE: " << myIndex;
+        } else {
+            myIndexes << myIndex;
+        }
+    }
+    qDebug() << "finish checkIndexQStringList";
+}
+
+void ApplicationUI::checkIndexQVariantMap()
+{
+    qDebug() << "Start checkIndexQVariantMap";
+        JsonDataAccess jda;
+        QVariantList cacheList;
+        QVariantMap myIndexes;
+        cacheList = jda.load(dataAssetsPath("fakeName.json")).toList();
+        for (int i = 0; i < cacheList.size(); ++i) {
+            QVariantMap fakeMap = cacheList.at(i).toMap();
+            QString myIndex = fakeMap.value("Username").toString();
+            if(myIndexes.contains(myIndex)) {
+                qDebug() << "DUPLICATE: " << myIndex;
+            } else {
+                myIndexes.insert(myIndex, "");
+            }
+        }
+        qDebug() << "finish checkIndexQVariantMap";
 }

@@ -39,6 +39,14 @@ class ApplicationUI : public QObject
     Q_OBJECT
 public:
     ApplicationUI();
+
+    Q_INVOKABLE
+    void checkIndexQStringList();
+
+    Q_INVOKABLE
+    void checkIndexQVariantMap();
+
+
     virtual ~ApplicationUI() {}
 private slots:
     void onSystemLanguageChanged();
