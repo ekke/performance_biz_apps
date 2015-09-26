@@ -135,5 +135,63 @@ void ApplicationUI::checkIndexQVariantMap()
     result.append(QString::number(duplicates)).append("\nTimer: ").append(
             QString::number(time.elapsed())).append(" mSeconds");
     qDebug() << "finish checkIndexQVariantMap";
+    emit doneVariantMap(result);
+}
+
+void ApplicationUI::checkIndexQMap()
+{
+    qDebug() << "Start checkIndexQMap";
+    JsonDataAccess jda;
+    QVariantList cacheList;
+    QMap<QString, QString> myIndexes;
+    int duplicates;
+    cacheList = jda.load(dataAssetsPath("fakeName.json")).toList();
+    duplicates = 0;
+    QTime time;
+    time.start();
+    for (int i = 0; i < cacheList.size(); ++i) {
+        QVariantMap fakeMap = cacheList.at(i).toMap();
+        QString myIndex = fakeMap.value("Username").toString();
+        if (myIndexes.contains(myIndex)) {
+            duplicates++;
+            qDebug() << "DUPLICATE: " << myIndex;
+        } else {
+            myIndexes.insert(myIndex, "");
+        }
+    }
+    QString result;
+    result = "via QMap<QString>\nduplicates: ";
+    result.append(QString::number(duplicates)).append("\nTimer: ").append(
+            QString::number(time.elapsed())).append(" mSeconds");
+    qDebug() << "finish checkIndexQMap";
     emit doneMap(result);
+}
+
+void ApplicationUI::checkIndexQHash()
+{
+    qDebug() << "Start checkIndexQHash";
+    JsonDataAccess jda;
+    QVariantList cacheList;
+    QHash<QString, QString> myIndexes;
+    int duplicates;
+    cacheList = jda.load(dataAssetsPath("fakeName.json")).toList();
+    duplicates = 0;
+    QTime time;
+    time.start();
+    for (int i = 0; i < cacheList.size(); ++i) {
+        QVariantMap fakeMap = cacheList.at(i).toMap();
+        QString myIndex = fakeMap.value("Username").toString();
+        if (myIndexes.contains(myIndex)) {
+            duplicates++;
+            qDebug() << "DUPLICATE: " << myIndex;
+        } else {
+            myIndexes.insert(myIndex, "");
+        }
+    }
+    QString result;
+    result = "via QHash<QString>\nduplicates: ";
+    result.append(QString::number(duplicates)).append("\nTimer: ").append(
+            QString::number(time.elapsed())).append(" mSeconds");
+    qDebug() << "finish checkIndexQHash";
+    emit doneHash(result);
 }

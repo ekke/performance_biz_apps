@@ -34,7 +34,7 @@ class QTranslator;
  *
  * Use this object to create and init app UI, to create context objects, to register the new meta types etc.
  */
-class ApplicationUI : public QObject
+class ApplicationUI: public QObject
 {
     Q_OBJECT
 public:
@@ -46,12 +46,21 @@ public:
     Q_INVOKABLE
     void checkIndexQVariantMap();
 
+    Q_INVOKABLE
+    void checkIndexQMap();
 
-    virtual ~ApplicationUI() {}
+    Q_INVOKABLE
+    void checkIndexQHash();
+
+    virtual ~ApplicationUI()
+    {
+    }
 
     Q_SIGNALS:
     void doneStringList(const QString& info);
+    void doneVariantMap(const QString& info);
     void doneMap(const QString& info);
+    void doneHash(const QString& info);
 
 private slots:
     void onSystemLanguageChanged();

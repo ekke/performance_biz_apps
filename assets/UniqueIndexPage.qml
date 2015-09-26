@@ -20,8 +20,24 @@ Page {
             title: "QVariantMap"
             ActionBar.placement: ActionBarPlacement.OnBar
             onTriggered: {
+                myLabel4VariantMap.text = "...work in progress...please wait..."
+                delayedVariantMap.start()
+            }
+        },
+        ActionItem {
+            title: "QMap"
+            ActionBar.placement: ActionBarPlacement.OnBar
+            onTriggered: {
                 myLabel4Map.text = "...work in progress...please wait..."
                 delayedMap.start()
+            }
+        },
+        ActionItem {
+            title: "QHash"
+            ActionBar.placement: ActionBarPlacement.OnBar
+            onTriggered: {
+                myLabel4Map.text = "...work in progress...please wait..."
+                delayedHash.start()
             }
         }
     ]
@@ -37,12 +53,30 @@ Page {
             }
         },
         QTimer {
-            id: delayedMap
+            id: delayedVariantMap
             interval: 300
             singleShot: true
             onTimeout: {
                 // delayed start so the Label has enough time to redraw text
                 app.checkIndexQVariantMap()
+            }
+        },
+        QTimer {
+            id: delayedMap
+            interval: 300
+            singleShot: true
+            onTimeout: {
+                // delayed start so the Label has enough time to redraw text
+                app.checkIndexQMap()
+            }
+        },
+        QTimer {
+            id: delayedHash
+            interval: 300
+            singleShot: true
+            onTimeout: {
+                // delayed start so the Label has enough time to redraw text
+                app.checkIndexQHash()
             }
         }
     ]
@@ -72,7 +106,25 @@ Page {
             Divider {
             }
             Label {
+                id: myLabel4VariantMap
+                text: ""
+                textStyle.fontSize: FontSize.Large
+                textStyle.color: ui.palette.primary
+                multiline: true
+            }
+            Divider {
+            }
+            Label {
                 id: myLabel4Map
+                text: ""
+                textStyle.fontSize: FontSize.Large
+                textStyle.color: ui.palette.primary
+                multiline: true
+            }
+            Divider {
+            }
+            Label {
+                id: myLabel4Hash
                 text: ""
                 textStyle.fontSize: FontSize.Large
                 textStyle.color: ui.palette.primary
@@ -93,14 +145,24 @@ Page {
         myLabel4StringList.text = info
         rootPane.showInfo("Work done")
     }
+    function onDoneVariantMap(info) {
+        myLabel4VariantMap.text = info
+        rootPane.showInfo("Work done")
+    }
     function onDoneMap(info) {
         myLabel4Map.text = info
+        rootPane.showInfo("Work done")
+    }
+    function onDoneHash(info) {
+        myLabel4Hash.text = info
         rootPane.showInfo("Work done")
     }
 
     onCreationCompleted: {
         app.doneStringList.connect(onDoneStringList)
+        app.doneVariantMap.connect(onDoneVariantMap)
         app.doneMap.connect(onDoneMap)
+        app.doneHash.connect(onDoneHash)
     }
 
 } // uniqueIndexPage
