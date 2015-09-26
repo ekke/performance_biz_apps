@@ -28,7 +28,7 @@ Page {
             title: "QMap"
             ActionBar.placement: ActionBarPlacement.OnBar
             onTriggered: {
-                myLabel4VariantMap.text = "...work in progress...please wait..."
+                myLabel4Map.text = "...work in progress...please wait..."
                 delayedMap.start()
             }
         },
